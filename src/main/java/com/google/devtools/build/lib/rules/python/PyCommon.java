@@ -155,7 +155,7 @@ public final class PyCommon {
   }
 
   public void addCommonTransitiveInfoProviders(RuleConfiguredTargetBuilder builder,
-      PythonSemantics semantics, NestedSet<Artifact> filesToBuild, NestedSet<PathFragment> imports) {
+      PythonSemantics semantics, NestedSet<Artifact> filesToBuild, NestedSet<String> imports) {
 
     builder
         .add(
@@ -181,7 +181,7 @@ public final class PyCommon {
    */
   public static Info createSourceProvider(
       NestedSet<Artifact> transitivePythonSources, boolean isUsingSharedLibrary,
-      NestedSet<PathFragment> imports) {
+      NestedSet<String> imports) {
     return NativeProvider.STRUCT.create(
         ImmutableMap.<String, Object>of(
             TRANSITIVE_PYTHON_SRCS,
@@ -189,26 +189,9 @@ public final class PyCommon {
             IS_USING_SHARED_LIBRARY,
             isUsingSharedLibrary,
             IMPORTS,
-            SkylarkNestedSet.of(String.class, makeImportStrings(imports))
+            SkylarkNestedSet.of(String.class, imports)
             ),
         "No such attribute '%s'");
-  }
-
-  /**
-   * Converts {@link NestedSet} of {@link PathFragment} to
-   * {@link NestedSet} of {@link String}
-   * @param imports - {@link NestedSet} of {@link PathFragment}
-   * @return - {@link NestedSet} of {@link String}
-   */
-  public static NestedSet<String> makeImportStrings(
-      NestedSet<PathFragment> imports) {
-    final NestedSetBuilder<String> builder = NestedSetBuilder.compileOrder();
-
-    for (PathFragment pathFragment : imports) {
-      builder.add(pathFragment.toString());
-    }
-
-    return builder.build();
   }
 
   public PythonVersion getDefaultPythonVersion() {
@@ -400,15 +383,15 @@ public final class PyCommon {
     return builder.build();
   }
 
-  public NestedSet<PathFragment> collectImports(
+  public NestedSet<String> collectImports(
       RuleContext ruleContext, PythonSemantics semantics) {
-    NestedSetBuilder<PathFragment> builder = NestedSetBuilder.compileOrder();
+    NestedSetBuilder<String> builder = NestedSetBuilder.compileOrder();
     builder.addAll(semantics.getImports(ruleContext));
     collectTransitivePythonImports(builder);
     return builder.build();
   }
 
-  private void collectTransitivePythonImports(NestedSetBuilder<PathFragment> builder) {
+  private void collectTransitivePythonImports(NestedSetBuilder<String> builder) {
     for (TransitiveInfoCollection dep : getTargetDeps()) {
       if (dep.getProvider(PythonImportsProvider.class) != null) {
         PythonImportsProvider provider = dep.getProvider(PythonImportsProvider.class);

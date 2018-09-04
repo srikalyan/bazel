@@ -71,7 +71,7 @@ public abstract class PyLibrary implements RuleConfiguredTargetFactory {
       }
     };
 
-    NestedSet<PathFragment> imports = common.collectImports(ruleContext, semantics);
+    NestedSet<String> imports = common.collectImports(ruleContext, semantics);
     if (ruleContext.hasErrors()) {
       return null;
     }

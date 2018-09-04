@@ -60,9 +60,9 @@ public interface PythonSemantics {
       RuleContext ruleContext, Collection<Artifact> sources, PyCommon common);
 
   /**
-   * Returns a list of PathFragments for the import paths specified in the imports attribute.
+   * Returns a list of Strings for the import paths specified in the imports attribute.
    */
-  List<PathFragment> getImports(RuleContext ruleContext);
+  List<String> getImports(RuleContext ruleContext);
 
   /**
    * Create the actual executable artifact.
@@ -73,7 +73,7 @@ public interface PythonSemantics {
       RuleContext ruleContext,
       PyCommon common,
       CcLinkParamsStore ccLinkParamsStore,
-      NestedSet<PathFragment> imports)
+      NestedSet<String> imports)
       throws InterruptedException;
 
   /**
